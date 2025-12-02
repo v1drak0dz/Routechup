@@ -1,0 +1,3 @@
+[submodule "lib/CanaTest"]
+	path = lib/CanaTest
+	url = https://github.com/v1drak0dz/CanaTest.git
