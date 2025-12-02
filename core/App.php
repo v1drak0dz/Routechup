@@ -74,4 +74,28 @@ class App
         }
         return $params;
     }
+
+    public function dispatch(string $method, string $uri)
+    {
+        foreach ($this->routes as $route) {
+            $pattern = preg_replace('#:([\w]+)#', '([^/]+)', $route['path']);
+            $pattern = "#^" . $pattern . "$#";
+
+            if ($method === $route['method'] && preg_match($pattern, $uri, $matches)) {
+                array_shift($matches);
+                $params = $this->extractParams($route['path'], $matches);
+
+                $req = ['params' => $params];
+                $res = new Response();
+
+                foreach ($this->middlewares as $mw) {
+                    $mw($req, $res);
+                }
+
+                return $route['handler']($req, $res);
+            }
+        }
+
+        return "404 Not Found";
+    }
 }
